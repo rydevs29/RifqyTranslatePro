@@ -3,236 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RifqyShop - Store Terpercaya</title>
+    <title>RifqyShop - Premium Digital Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --secondary: #1e40af;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --accent: #ef4444;
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #f093fb;
+            --accent-2: #f5576c;
+            --bg-dark: #0a0a2a;
+            --text-light: #ffffff;
+            --text-gray: #b3b3b3;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Particles Background Container */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(to bottom, #020012, #090925);
+        }
+
+        /* Glassmorphism Effect Shared Class */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 2rem 1rem;
             text-align: center;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 3rem 1rem;
+            position: relative;
+            z-index: 2;
         }
 
         header h1 {
-            font-size: 2.5rem;
+            font-size: 3.5rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+            letter-spacing: 2px;
         }
 
         header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1.2rem;
+            color: var(--text-gray);
         }
 
         /* Container */
         .container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2rem;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, var(--secondary), var(--accent-2));
+            margin: 10px auto 0;
+            border-radius: 2px;
         }
 
         /* Product Grid */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
         }
 
         /* Card Style */
         .card {
-            background: var(--card-bg);
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            transition: all 0.4s ease;
             display: flex;
             flex-direction: column;
-            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.2);
+        }
+        
+        .card:hover::before {
+            opacity: 1;
         }
 
         .card-header {
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
-            background-color: #f1f5f9;
-            border-bottom: 1px solid #e2e8f0;
+            background: rgba(0,0,0,0.2);
         }
 
         .icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
-            display: block;
+            display: inline-block;
+            text-shadow: 0 0 15px rgba(255,255,255,0.3);
         }
 
         .product-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--secondary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
         }
 
         .card-body {
-            padding: 1.5rem;
+            padding: 2rem;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .features {
             list-style: none;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-grow: 1;
         }
 
         .features li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
+            color: var(--text-gray);
         }
 
         .features li::before {
-            content: "✓";
-            color: var(--primary);
-            font-weight: bold;
-            margin-right: 0.5rem;
+            content: "⚡";
+            margin-right: 0.8rem;
+            color: var(--accent);
         }
 
         .price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--accent);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             display: block;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
         }
 
+        /* Button */
         .btn-buy {
             display: block;
             width: 100%;
             padding: 1rem;
-            background-color: #25D366; /* Warna WA */
+            background: linear-gradient(45deg, #11998e, #38ef7d);
             color: white;
             text-align: center;
             text-decoration: none;
-            font-weight: bold;
-            border-radius: 8px;
-            transition: background 0.3s;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.3);
         }
 
         .btn-buy:hover {
-            background-color: #128C7E;
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);
+            letter-spacing: 1px;
         }
 
         /* Footer */
         footer {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             margin-top: 3rem;
-            color: #64748b;
+            color: var(--text-gray);
             font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
         }
 
         /* Responsive */
         @media (max-width: 600px) {
-            header h1 { font-size: 2rem; }
-            .container { padding: 0 15px; }
+            header h1 { font-size: 2.5rem; }
+            .container { padding: 2rem 1rem; }
+            .card:hover { transform: translateY(-5px); }
         }
     </style>
 </head>
 <body>
 
+    <div id="particles-js"></div>
+
     <header>
-        <h1>RifqyShop</h1>
-        <p>Solusi Digital Murah & Terpercaya</p>
+        <h1>RIFQYSHOP</h1>
+        <p>Digital Solutions. Level Up Your Game.</p>
     </header>
 
     <div class="container">
-        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--secondary);">Layanan Kami</h2>
+        <h2 class="section-title text-light">Pilih Layanan Kami</h2>
         
         <div class="product-grid">
 
-            <div class="card">
+            <div class="card glass">
                 <div class="card-header">
-                    <span class="icon">📱</span>
+                    <span class="icon">🚀</span>
                     <h3 class="product-title">Aplikasi Mod VIP</h3>
                 </div>
                 <div class="card-body">
-                    <p style="margin-bottom: 1rem; color: #64748b;">Aplikasi premium dengan fitur terbuka semua.</p>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-gray);">Aplikasi premium dengan fitur "God Mode" terbuka semua.</p>
                     <ul class="features">
                         <li>Bebas Iklan (No Ads)</li>
-                        <li>Fitur Premium Unlocked</li>
-                        <li>Support Android Terbaru</li>
-                        <li>Garansi Instalasi</li>
+                        <li>Semua Fitur Premium Unlocked</li>
+                        <li>Anti-Banned System</li>
+                        <li>Garansi Instalasi Sukses</li>
                     </ul>
-                    <span class="price">Rp 25.000 <span style="font-size: 0.8rem; color: #64748b;">/ App</span></span>
+                    <span class="price">Rp 25.000 <span style="font-size: 0.9rem; color: var(--text-gray);">/ App</span></span>
                     <button class="btn-buy" onclick="beliViaWA('Aplikasi Mod VIP')">
-                        Beli Sekarang ➜
+                        🔥 GAS BELI SEKARANG
                     </button>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card glass">
                 <div class="card-header">
                     <span class="icon">💎</span>
-                    <h3 class="product-title">Akun Premium</h3>
+                    <h3 class="product-title">Akun Premium Sultan</h3>
                 </div>
                 <div class="card-body">
-                    <p style="margin-bottom: 1rem; color: #64748b;">Akun resmi bergaransi untuk hiburan & kerja.</p>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-gray);">Nikmati hiburan tanpa batas dengan harga pelajar.</p>
                     <ul class="features">
-                        <li>Canva Pro / Spotify / Netflix</li>
-                        <li>Akun Private / Sharing</li>
-                        <li>Full Garansi</li>
-                        <li>Proses Cepat</li>
+                        <li>Netflix 4K UHD / Spotify Fam</li>
+                        <li>Canva Pro Lifetime</li>
+                        <li>Akun Legal & Bergaransi</li>
+                        <li>Proses Kilat 5 Menit</li>
                     </ul>
                     <span class="price">Mulai Rp 15.000</span>
-                    <button class="btn-buy" onclick="beliViaWA('Akun Premium (Canva/Netflix/Spotify)')">
-                        Beli Sekarang ➜
+                    <button class="btn-buy" onclick="beliViaWA('Akun Premium Sultan')">
+                        🔥 GAS BELI SEKARANG
                     </button>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card glass">
                 <div class="card-header">
-                    <span class="icon">💻</span>
-                    <h3 class="product-title">Jasa Pembuatan Website</h3>
+                    <span class="icon">🌐</span>
+                    <h3 class="product-title">Web Developer Jasa</h3>
                 </div>
                 <div class="card-body">
-                    <p style="margin-bottom: 1rem; color: #64748b;">Website profesional untuk personal atau bisnis.</p>
+                    <p style="margin-bottom: 1.5rem; color: var(--text-gray);">Website profesional agar bisnis/profilmu makin kece.</p>
                     <ul class="features">
-                        <li>Landing Page / Portofolio</li>
-                        <li>Desain Responsif (HP/PC)</li>
-                        <li>Gratis Hosting (GitHub Pages)</li>
-                        <li>Revisi Tampilan</li>
+                        <li>Desain Modern & Responsif</li>
+                        <li>Gratis Hosting Selamanya</li>
+                        <li>Tampilan "WAH" seperti ini</li>
+                        <li>Konsultasi Sampai Jadi</li>
                     </ul>
                     <span class="price">Mulai Rp 150.000</span>
                     <button class="btn-buy" onclick="beliViaWA('Jasa Pembuatan Website')">
-                        Konsultasi Sekarang ➜
+                        💬 KONSULTASI DULU
                     </button>
                 </div>
             </div>
@@ -241,21 +325,109 @@
     </div>
 
     <footer>
-        <p>&copy; 2025 RifqyShop. All rights reserved.</p>
+        <p class="glass" style="display: inline-block; padding: 1rem 2rem; border-radius: 50px;">
+            &copy; 2025 RifqyShop. Built for the future.
+        </p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <script>
+        // --- Konfigurasi Particles.js (Efek WAHHHHH) ---
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": ["#00f2fe", "#4facfe", "#f093fb"]
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#4facfe",
+                    "opacity": 0.3,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
+        // --- Fungsi WhatsApp ---
         function beliViaWA(produk) {
-            // Nomor telepon (format internasional tanpa +)
             const nomor = "6287759652715";
-            
-            // Pesan otomatis
-            const pesan = `Halo RifqyShop, saya tertarik untuk membeli/memesan *${produk}*. Bisa info detailnya?`;
-            
-            // Encode pesan agar aman di URL
+            const pesan = `Halo RifqyShop, saya melihat website keren Anda dan tertarik untuk order *${produk}*. Bisa dibantu?`;
             const url = `https://wa.me/${nomor}?text=${encodeURIComponent(pesan)}`;
-            
-            // Buka di tab baru
             window.open(url, '_blank');
         }
     </script>
