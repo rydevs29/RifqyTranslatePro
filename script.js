@@ -11,7 +11,7 @@ function init() {
     setupDD(langTextDB, 'lstTxtTgt', 'lblTxtTgt', 'valTxtTgt', 'en');
     setupDD(langVoiceDB, 'lstVA', 'lblVA', 'valVA', 0);
     setupDD(langVoiceDB, 'lstVB', 'lblVB', 'valVB', 1);
-    setupDD(langTextDB, 'lstWebTgt', 'lblWebTgt', 'valWebTgt', 'id'); // Default Web Translate ke Indo
+    setupDD(langTextDB, 'lstWebTgt', 'lblWebTgt', 'valWebTgt', 'id');
     
     // Load Voices for Settings
     window.speechSynthesis.onvoiceschanged = () => {
@@ -96,8 +96,8 @@ function goTab(t) {
     activeTab = t;
 }
 
-// --- 3. TRANSLATION CORE ---
-async function coreTrans(text, s, t, statusCallback) {
+// --- 3. TRANSLATION CORE (ANIMASI ... SAJA) ---
+async function coreTrans(text, s, t) {
     const fetchPost = async (u, b) => {
         let c = new AbortController(); setTimeout(()=>c.abort(), 4000);
         let r = await fetch(u, {method:'POST', body:JSON.stringify(b), headers:{'Content-Type':'application/json'}, signal:c.signal});
@@ -113,7 +113,8 @@ async function coreTrans(text, s, t, statusCallback) {
 
     for(let api of apis) {
         try {
-            if(statusCallback) statusCallback(`Mencoba ${api.name}...`);
+            // TIDAK ADA LAGI TEKS "MENCOBA SERVER..."
+            // HANYA MENGANDALKAN ANIMASI CSS (...)
             let res;
             if(api.t === 'post') {
                 res = await api.f(text);
@@ -141,14 +142,14 @@ async function runTranslate() {
     let output = document.getElementById('txtOutput');
     let badge = document.getElementById('badgeTxt');
     
-    loader.classList.remove('hidden');
+    loader.classList.remove('hidden'); // Munculkan Animasi ...
     output.value = "";
-    output.placeholder = "Menghubungkan ke server...";
+    output.placeholder = ""; // Kosongkan placeholder (biar animasi kelihatan)
     badge.classList.add('hidden');
     
     let tgt = document.getElementById('valTxtTgt').value;
     
-    let result = await coreTrans(txt, 'auto', tgt, (status) => { output.placeholder = status; });
+    let result = await coreTrans(txt, 'auto', tgt);
     
     loader.classList.add('hidden');
     if(result) {
@@ -207,7 +208,9 @@ async function doVoiceTrans(txt) {
     let other = (side==='A')?'B':'A';
     let idxT = document.getElementById('valV'+other).value;
     
-    let result = await coreTrans(txt, langVoiceDB[idxS][2], langVoiceDB[idxT][2], (msg) => { statusEl.innerText = msg; });
+    // Status update animasi sederhana
+    statusEl.innerText = "Processing..."; 
+    let result = await coreTrans(txt, langVoiceDB[idxS][2], langVoiceDB[idxT][2]);
 
     if(result) {
         document.getElementById('trV'+((side==='A')?'A':'B')).innerText = ""; 
@@ -221,7 +224,7 @@ async function doVoiceTrans(txt) {
     }
 }
 
-// --- 6. OCR & FILE (Support PDF & DOCX) ---
+// --- 6. OCR & FILE (STATUS DINAMIS & PERSEN) ---
 async function handleFile() {
     let f = document.getElementById('fileIn').files[0];
     if(!f) return;
@@ -232,24 +235,31 @@ async function handleFile() {
     loadEl.classList.remove('hidden');
     document.getElementById('ocrRes').classList.add('hidden');
 
-    // 1. IMAGE OCR (Tesseract)
+    // 1. IMAGE OCR (Pakai Persen)
     if(f.type.includes('image')) {
-        statusText.innerText = "Scan OCR...";
+        statusText.innerText = "Memulai Scan...";
         try {
-            let {data:{text}} = await Tesseract.recognize(f, 'eng');
+            let {data:{text}} = await Tesseract.recognize(f, 'eng', {
+                logger: m => {
+                    if(m.status === 'recognizing text') {
+                        statusText.innerText = `Memindai Gambar: ${Math.round(m.progress * 100)}%`;
+                    } else {
+                        statusText.innerText = "Memproses Gambar...";
+                    }
+                }
+            });
             finishOCR(text);
         } catch(e) { statusText.innerText = "Error OCR"; }
         
     // 2. PDF READER
     } else if(f.type.includes('pdf')) {
-        statusText.innerText = "Membaca PDF...";
+        statusText.innerText = "Memproses File PDF...";
         let fileReader = new FileReader();
         fileReader.onload = async function() {
             let typedarray = new Uint8Array(this.result);
             try {
                 const pdf = await pdfjsLib.getDocument(typedarray).promise;
                 let fullText = "";
-                // Limit read to first 3 pages to prevent freeze on huge PDFs
                 let maxPages = Math.min(pdf.numPages, 3);
                 for(let i=1; i<=maxPages; i++) {
                     let page = await pdf.getPage(i);
@@ -263,7 +273,7 @@ async function handleFile() {
 
     // 3. WORD (DOCX) READER
     } else if(f.name.includes('.docx')) {
-        statusText.innerText = "Membaca Dokumen Word...";
+        statusText.innerText = "Memproses Dokumen Word...";
         let fileReader = new FileReader();
         fileReader.onload = function(event) {
             let arrayBuffer = event.target.result;
@@ -275,7 +285,7 @@ async function handleFile() {
 
     // 4. TEXT FILE
     } else {
-        statusText.innerText = "Membaca File Teks...";
+        statusText.innerText = "Membaca Teks...";
         let r = new FileReader();
         r.onload = e => finishOCR(e.target.result);
         r.readAsText(f);
@@ -299,7 +309,7 @@ function transferToText() {
     goTab('text');
 }
 
-// --- 7. WEB TRANSLATOR LOGIC ---
+// --- 7. WEB TRANSLATOR ---
 function runWebTranslate() {
     let url = document.getElementById('webUrl').value.trim();
     let target = document.getElementById('valWebTgt').value;
@@ -307,12 +317,11 @@ function runWebTranslate() {
     if(!url) { alert("Masukkan URL dulu!"); return; }
     if(!url.startsWith('http')) url = 'https://' + url;
     
-    // Open Google Translate Wrapper
     let gUrl = `https://translate.google.com/translate?sl=auto&tl=${target}&u=${encodeURIComponent(url)}`;
     window.open(gUrl, '_blank');
 }
 
-// --- 8. HISTORY & SETTINGS ---
+// --- 8. HISTORY (KLIK UNTUK LOAD) ---
 function saveHist(src, tgt, l1, l2) {
     historyDB.unshift({s:src, t:tgt, l1, l2, d:new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})});
     if(historyDB.length > 30) historyDB.pop();
@@ -323,9 +332,11 @@ function saveHist(src, tgt, l1, l2) {
 function renderHist() {
     let h = document.getElementById('histList'); h.innerHTML='';
     if(historyDB.length === 0) { h.innerHTML = '<p class="text-center text-slate-600 text-xs mt-4">Belum ada riwayat.</p>'; return; }
-    historyDB.forEach(x => {
+    
+    // RENDER DENGAN FUNGSI KLIK
+    historyDB.forEach((x, i) => {
         h.innerHTML += `
-        <div class="bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition group">
+        <div onclick="loadHistItem(${i})" class="bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition group cursor-pointer active:scale-95">
             <div class="flex justify-between text-[10px] text-slate-500 mb-1">
                 <span class="uppercase tracking-wider font-bold text-blue-500/70">${x.l1} &rarr; ${x.l2}</span><span>${x.d}</span>
             </div>
@@ -334,6 +345,30 @@ function renderHist() {
         </div>`;
     });
 }
+
+function loadHistItem(index) {
+    let item = historyDB[index];
+    if(!item) return;
+
+    // Pindah ke Tab Teks
+    goTab('text');
+
+    // Isi Data
+    document.getElementById('txtInput').value = item.s;
+    document.getElementById('txtOutput').value = item.t;
+    
+    // Coba set bahasa target di dropdown (jika ada di DB)
+    let tgtVal = item.l2; 
+    // Kita simpan kode bahasa di l2 sebelumnya, jadi aman.
+    document.getElementById('valTxtTgt').value = tgtVal;
+    
+    // Update label dropdown (cari nama bahasa berdasarkan kode)
+    let langObj = langTextDB.find(l => l.code === tgtVal);
+    if(langObj) {
+        document.getElementById('lblTxtTgt').innerText = langObj.name;
+    }
+}
+
 function clearHist() { localStorage.removeItem('rt_history'); historyDB=[]; renderHist(); }
 
 function toggleSettings() { document.getElementById('modalSet').classList.toggle('hidden'); }
@@ -357,6 +392,6 @@ function speakRaw(txt, lang) {
     window.speechSynthesis.speak(u);
 }
 
-function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).value); alert("Disalin!"); }
+function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).value); alert("Teks disalin!"); }
 
 init();
