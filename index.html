@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RifqyTranslatePro V2</title>
+    <title>RifqyTranslatePro V2.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -19,38 +17,70 @@
         <h1 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-orange-500 tracking-wide">
             RifqyTranslate<span class="text-white text-[10px] align-top ml-1 border border-white/20 px-1 rounded bg-white/10">PRO</span>
         </h1>
-        <button onclick="toggleSettings()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-400 hover:text-white" title="Pengaturan">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-        </button>
+        <button onclick="toggleSettings()" class="p-2 rounded-full hover:bg-white/10 transition text-slate-400 hover:text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></button>
     </div>
 
     <main class="flex-grow relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 to-black">
         
         <section id="tab-text" class="w-full h-full flex flex-col p-4 overflow-y-auto no-scrollbar">
-            <div class="max-w-2xl w-full mx-auto space-y-4">
+            <div class="max-w-3xl w-full mx-auto space-y-4">
+                
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
                     <div class="flex justify-between mb-2"><span class="text-xs font-bold text-slate-400">INPUT</span><span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">Auto Detect</span></div>
                     <textarea id="txtInput" class="w-full bg-transparent outline-none text-lg resize-none min-h-[100px]" placeholder="Ketik teks..."></textarea>
                 </div>
-                <div class="flex justify-center"><div class="p-2 rounded-full bg-white/5 border border-white/10"><svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7-7-7m7 7V3"></path></svg></div></div>
-                <div class="bg-slate-900/80 border border-white/10 rounded-2xl p-4 shadow-lg relative min-h-[150px]">
-                    <div class="flex justify-between items-center mb-2 z-20">
-                        <div class="relative w-48">
-                            <button id="btnTxtTgt" onclick="toggleDD('ddTxtTgt')" class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-left flex justify-between items-center hover:bg-white/10 transition"><span id="lblTxtTgt">English</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-                            <div id="ddTxtTgt" class="hidden absolute top-full left-0 mt-1 w-64 bg-[#151515] border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden"><div class="p-2 border-b border-white/10"><input type="text" id="srcTxtTgt" class="w-full bg-black border border-white/10 rounded px-2 py-1 text-xs text-white" placeholder="Cari..." onkeyup="filterLang('srcTxtTgt','lstTxtTgt')"></div><ul id="lstTxtTgt" class="custom-dropdown max-h-60 overflow-y-auto p-1"></ul></div>
-                            <input type="hidden" id="valTxtTgt">
+
+                <div class="flex justify-between items-center px-2">
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" id="chkCompare" class="w-4 h-4 accent-purple-500 rounded cursor-pointer" onchange="toggleCompareMode()">
+                        <span class="text-xs text-slate-400 font-bold group-hover:text-white transition select-none">Bandingkan Mesin</span>
+                    </label>
+                    
+                    <div class="p-2 rounded-full bg-white/5 border border-white/10 text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7-7-7m7 7V3"></path></svg></div>
+                    
+                    <div class="w-24"></div> </div>
+
+                <div class="relative">
+                    
+                    <div id="stdOutputArea" class="bg-slate-900/80 border border-white/10 rounded-2xl p-4 shadow-lg relative min-h-[150px]">
+                        <div class="flex justify-between items-center mb-2 z-20">
+                            <div class="relative w-48">
+                                <button id="btnTxtTgt" onclick="toggleDD('ddTxtTgt')" class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-left flex justify-between items-center hover:bg-white/10 transition"><span id="lblTxtTgt">English</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+                                <div id="ddTxtTgt" class="hidden absolute top-full left-0 mt-1 w-64 bg-[#151515] border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden"><div class="p-2 border-b border-white/10"><input type="text" id="srcTxtTgt" class="w-full bg-black border border-white/10 rounded px-2 py-1 text-xs text-white" placeholder="Cari..." onkeyup="filterLang('srcTxtTgt','lstTxtTgt')"></div><ul id="lstTxtTgt" class="custom-dropdown max-h-60 overflow-y-auto p-1"></ul></div>
+                                <input type="hidden" id="valTxtTgt">
+                            </div>
+                            <div id="badgeTxt" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">Google</div>
                         </div>
-                        <div id="badgeTxt" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">Google</div>
+                        <div class="relative flex-grow">
+                            <textarea id="txtOutput" readonly class="w-full h-full bg-transparent outline-none text-lg resize-none text-purple-100" placeholder=""></textarea>
+                            <div id="loaderTxt" class="hidden absolute inset-0 flex items-center justify-center"><span class="typing-indicator"><span></span><span></span><span></span></span></div>
+                        </div>
+                        <div class="flex justify-end gap-2 mt-2 pt-2 border-t border-white/5">
+                            <button onclick="speak('txtOutput', 'valTxtTgt')" class="p-2 hover:text-purple-400 text-slate-400 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg></button>
+                            <button onclick="copyText('txtOutput')" class="p-2 hover:text-blue-400 text-slate-400 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg></button>
+                        </div>
                     </div>
-                    <div class="relative flex-grow">
-                        <textarea id="txtOutput" readonly class="w-full h-full bg-transparent outline-none text-lg resize-none text-purple-100" placeholder=""></textarea>
-                        <div id="loaderTxt" class="hidden absolute inset-0 flex items-center justify-center"><span class="typing-indicator"><span></span><span></span><span></span></span></div>
+
+                    <div id="compArea" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="bg-slate-900 border border-white/10 rounded-xl p-3 min-h-[120px] flex flex-col relative">
+                            <span class="text-[10px] font-bold text-blue-400 mb-1">GOOGLE</span>
+                            <textarea id="outComp1" readonly class="w-full flex-grow bg-transparent outline-none text-sm resize-none text-slate-300"></textarea>
+                            <div id="loadComp1" class="hidden absolute inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm"><span class="typing-indicator scale-75"><span></span><span></span><span></span></span></div>
+                        </div>
+                        <div class="bg-slate-900 border border-white/10 rounded-xl p-3 min-h-[120px] flex flex-col relative">
+                            <span class="text-[10px] font-bold text-green-400 mb-1">LINGVA</span>
+                            <textarea id="outComp2" readonly class="w-full flex-grow bg-transparent outline-none text-sm resize-none text-slate-300"></textarea>
+                            <div id="loadComp2" class="hidden absolute inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm"><span class="typing-indicator scale-75"><span></span><span></span><span></span></span></div>
+                        </div>
+                        <div class="bg-slate-900 border border-white/10 rounded-xl p-3 min-h-[120px] flex flex-col relative">
+                            <span class="text-[10px] font-bold text-orange-400 mb-1">LIBRE</span>
+                            <textarea id="outComp3" readonly class="w-full flex-grow bg-transparent outline-none text-sm resize-none text-slate-300"></textarea>
+                            <div id="loadComp3" class="hidden absolute inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm"><span class="typing-indicator scale-75"><span></span><span></span><span></span></span></div>
+                        </div>
                     </div>
-                    <div class="flex justify-end gap-2 mt-2 pt-2 border-t border-white/5">
-                        <button onclick="speak('txtOutput', 'valTxtTgt')" class="p-2 hover:text-purple-400 text-slate-400 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg></button>
-                        <button onclick="copyText('txtOutput')" class="p-2 hover:text-blue-400 text-slate-400 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg></button>
-                    </div>
+
                 </div>
+
                 <button onclick="runTranslate()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-bold shadow-lg shadow-purple-500/20 active:scale-95 transition">TERJEMAHKAN</button>
             </div>
         </section>
@@ -78,14 +108,11 @@
         <section id="tab-img" class="hidden w-full h-full flex flex-col p-6 items-center overflow-y-auto">
             <div class="max-w-xl w-full space-y-6">
                 <div class="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center hover:border-blue-500/50 transition cursor-pointer group" onclick="document.getElementById('fileIn').click()">
-                    <div class="p-4 bg-white/5 inline-block rounded-full mb-4 group-hover:scale-110 transition">
-                        <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
+                    <div class="p-4 bg-white/5 inline-block rounded-full mb-4 group-hover:scale-110 transition"><svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
                     <p class="text-lg font-bold text-white mb-1">Upload File Dokumen</p>
-                    <p class="text-xs text-slate-500">Mendukung: <span class="text-blue-400 font-bold">.JPG, .PNG, .PDF, .DOCX, .TXT</span></p>
+                    <p class="text-xs text-slate-500">Mendukung: <span class="text-blue-400 font-bold">.JPG, .PDF, .DOCX, .TXT</span></p>
                     <input type="file" id="fileIn" class="hidden" accept="image/*,.txt,.pdf,.docx" onchange="handleFile()">
                 </div>
-                
                 <div id="ocrRes" class="hidden bg-slate-900 border border-white/10 rounded-2xl p-4 w-full">
                     <h3 class="text-xs font-bold text-blue-400 mb-2">HASIL EKSTRAKSI:</h3>
                     <p id="extractedText" class="text-sm text-white mb-4 italic p-2 bg-black/20 rounded max-h-40 overflow-y-auto">...</p>
@@ -100,20 +127,12 @@
                 <div class="bg-gradient-to-br from-purple-900/40 to-blue-900/40 border border-white/10 rounded-2xl p-8">
                     <svg class="w-16 h-16 mx-auto text-blue-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                     <h2 class="text-xl font-bold mb-2">Penerjemah Website</h2>
-                    <p class="text-sm text-slate-400 mb-6">Masukkan link website (URL) untuk menerjemahkan seluruh halaman.</p>
-                    
                     <input type="text" id="webUrl" placeholder="Contoh: https://wikipedia.org" class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500 mb-4">
-                    
                     <div class="flex items-center gap-2 mb-6 justify-center">
                         <span class="text-xs text-slate-500">Terjemahkan ke:</span>
-                        <div class="relative w-40">
-                             <button id="btnWebTgt" onclick="toggleDD('ddWebTgt')" class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-left flex justify-between items-center hover:bg-white/10 transition"><span id="lblWebTgt">Indonesian</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-                            <div id="ddWebTgt" class="hidden absolute top-full left-0 mt-1 w-64 bg-[#151515] border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden text-left"><div class="p-2 border-b border-white/10"><input type="text" id="srcWebTgt" class="w-full bg-black border border-white/10 rounded px-2 py-1 text-xs text-white" placeholder="Cari..." onkeyup="filterLang('srcWebTgt','lstWebTgt')"></div><ul id="lstWebTgt" class="custom-dropdown max-h-60 overflow-y-auto p-1"></ul></div>
-                            <input type="hidden" id="valWebTgt">
-                        </div>
+                        <div class="relative w-40"><button id="btnWebTgt" onclick="toggleDD('ddWebTgt')" class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-left flex justify-between items-center hover:bg-white/10 transition"><span id="lblWebTgt">Indonesian</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><div id="ddWebTgt" class="hidden absolute top-full left-0 mt-1 w-64 bg-[#151515] border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden text-left"><div class="p-2 border-b border-white/10"><input type="text" id="srcWebTgt" class="w-full bg-black border border-white/10 rounded px-2 py-1 text-xs text-white" placeholder="Cari..." onkeyup="filterLang('srcWebTgt','lstWebTgt')"></div><ul id="lstWebTgt" class="custom-dropdown max-h-60 overflow-y-auto p-1"></ul></div><input type="hidden" id="valWebTgt"></div>
                     </div>
-
-                    <button onclick="runWebTranslate()" class="w-full py-3 bg-blue-600 rounded-xl font-bold shadow-lg hover:bg-blue-500 transition">BUKA WEBSITE TERJEMAHAN 🔗</button>
+                    <button onclick="runWebTranslate()" class="w-full py-3 bg-blue-600 rounded-xl font-bold shadow-lg hover:bg-blue-500 transition">BUKA WEBSITE 🔗</button>
                 </div>
             </div>
         </section>
@@ -124,7 +143,6 @@
                 <div id="histList" class="space-y-3"></div>
             </div>
         </section>
-
     </main>
 
     <nav class="shrink-0 h-[65px] bg-black border-t border-white/10 flex justify-around items-center z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
@@ -138,16 +156,9 @@
     <div id="modalSet" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
         <div class="bg-[#151515] w-full max-w-sm rounded-2xl border border-white/20 p-6 shadow-2xl">
             <h3 class="text-lg font-bold mb-4 text-white">Pengaturan Suara</h3>
-            
-            <label class="text-xs text-slate-400 block mb-2">Jenis Suara (Tergantung Browser)</label>
-            <select id="setVoice" class="w-full bg-black border border-white/10 rounded px-2 py-2 text-sm text-white mb-4 outline-none"></select>
-
-            <label class="text-xs text-slate-400 block mb-1">Kecepatan: <span id="valRate">1.0</span>x</label>
-            <input type="range" id="setRate" min="0.5" max="2" step="0.1" value="1" class="w-full accent-blue-500 mb-4" oninput="document.getElementById('valRate').innerText=this.value">
-
-            <label class="text-xs text-slate-400 block mb-1">Nada (Pitch): <span id="valPitch">1.0</span></label>
-            <input type="range" id="setPitch" min="0.5" max="2" step="0.1" value="1" class="w-full accent-purple-500 mb-6" oninput="document.getElementById('valPitch').innerText=this.value">
-
+            <label class="text-xs text-slate-400 block mb-2">Jenis Suara</label><select id="setVoice" class="w-full bg-black border border-white/10 rounded px-2 py-2 text-sm text-white mb-4 outline-none"></select>
+            <label class="text-xs text-slate-400 block mb-1">Kecepatan: <span id="valRate">1.0</span>x</label><input type="range" id="setRate" min="0.5" max="2" step="0.1" value="1" class="w-full accent-blue-500 mb-4" oninput="document.getElementById('valRate').innerText=this.value">
+            <label class="text-xs text-slate-400 block mb-1">Nada: <span id="valPitch">1.0</span></label><input type="range" id="setPitch" min="0.5" max="2" step="0.1" value="1" class="w-full accent-purple-500 mb-6" oninput="document.getElementById('valPitch').innerText=this.value">
             <button onclick="toggleSettings()" class="w-full py-3 bg-white/10 rounded-xl font-bold text-white hover:bg-white/20 transition">TUTUP</button>
         </div>
     </div>
