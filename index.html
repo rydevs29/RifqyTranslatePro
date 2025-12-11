@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RifqyTranslatePro V2.1</title>
+    <title>RifqyTranslatePro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
@@ -32,15 +32,15 @@
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 shadow-lg backdrop-blur-sm">
                     <div class="flex justify-between mb-2">
                         <span class="text-xs font-bold text-slate-400">INPUT TEKS</span>
-                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">Auto Detect</span>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">Deteksi Otomatis</span>
                     </div>
-                    <textarea id="txtInput" class="w-full bg-transparent outline-none text-lg resize-none min-h-[100px] placeholder-slate-600" placeholder="Ketik atau tempel teks di sini..."></textarea>
+                    <textarea id="txtInput" class="w-full bg-transparent outline-none text-lg resize-none min-h-[100px] placeholder-slate-600" placeholder="KetikKkan teks di sini..."></textarea>
                 </div>
 
                 <div class="flex justify-between items-center px-2">
                     <label class="flex items-center gap-2 cursor-pointer group p-2 rounded hover:bg-white/5 transition">
                         <input type="checkbox" id="chkCompare" class="w-4 h-4 accent-purple-500 rounded cursor-pointer" onchange="toggleCompareMode()">
-                        <span class="text-xs text-slate-400 font-bold group-hover:text-white transition select-none">Bandingkan Mesin</span>
+                        <span class="text-xs text-slate-400 font-bold group-hover:text-white transition select-none">Bandingkan Mesin Penerjemah</span>
                     </label>
                     
                     <div class="p-2 rounded-full bg-white/5 border border-white/10 text-slate-500">
@@ -109,7 +109,7 @@
         <section id="tab-voice" class="hidden w-full h-full flex-col md:flex-row">
             <div class="flex-1 bg-slate-900 border-r border-white/10 flex flex-col relative overflow-hidden">
                 <div class="p-3 bg-slate-900/90 z-20 flex flex-col h-[70px]">
-                    <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span><span class="text-[10px] text-blue-400 font-bold">SAYA</span></div>
+                    <div class="flex items-center gap-2 mb-1"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span><span class="text-[10px] text-blue-400 font-bold">BAHASA SAYA</span></div>
                     <div class="relative w-full"><button id="btnVA" onclick="toggleDD('ddVA')" class="w-full text-left text-sm font-semibold flex justify-between bg-white/5 border border-white/10 rounded px-2 py-1"><span id="lblVA">Indo</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><div id="ddVA" class="hidden absolute top-full left-0 mt-1 w-64 bg-[#151515] border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden"><div class="p-2 border-b border-white/10"><input type="text" id="srcVA" class="w-full bg-black border border-white/10 rounded text-xs px-2 py-1 text-white" onkeyup="filterLang('srcVA','lstVA')"></div><ul id="lstVA" class="custom-dropdown max-h-60 overflow-y-auto p-1"></ul></div><input type="hidden" id="valVA"></div>
                 </div>
                 <div class="flex-1 flex flex-col items-center justify-center p-4 text-center overflow-y-auto no-scrollbar"><p id="voiceTextA" class="text-2xl font-bold text-white">...</p><p id="trVA" class="text-blue-300 italic mt-2"></p></div>
@@ -117,7 +117,7 @@
             </div>
             <div class="flex-1 bg-black flex flex-col relative overflow-hidden">
                 <div class="p-3 bg-black/90 z-20 flex flex-col h-[70px] items-end">
-                    <div class="flex items-center gap-2 mb-1"><span class="text-[10px] text-orange-400 font-bold">LAWAN</span><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span></div>
+                    <div class="flex items-center gap-2 mb-1"><span class="text-[10px] text-orange-400 font-bold">BAHASA LAWAN BICARA</span><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span></div>
                     <div class="relative w-full"><button id="btnVB" onclick="toggleDD('ddVB')" class="w-full text-right text-sm font-semibold flex justify-between flex-row-reverse bg-white/5 border border-white/10 rounded px-2 py-1"><span id="lblVB">English</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><div id="ddVB" class="hidden absolute top-full right-0 mt-1 w-64 bg-[#151515] border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden"><div class="p-2 border-b border-white/10"><input type="text" id="srcVB" class="w-full bg-black border border-white/10 rounded text-xs px-2 py-1 text-white" onkeyup="filterLang('srcVB','lstVB')"></div><ul id="lstVB" class="custom-dropdown max-h-60 overflow-y-auto p-1"></ul></div><input type="hidden" id="valVB"></div>
                 </div>
                 <div class="flex-1 flex flex-col items-center justify-center p-4 text-center overflow-y-auto no-scrollbar"><p id="voiceTextB" class="text-2xl font-bold text-white">...</p><p id="trVB" class="text-orange-300 italic mt-2"></p></div>
@@ -133,7 +133,7 @@
                         <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
                     <p class="text-lg font-bold text-white mb-1">Upload File Dokumen</p>
-                    <p class="text-xs text-slate-500">Mendukung: <span class="text-blue-400 font-bold">.JPG, .PDF, .DOCX, .TXT</span></p>
+                    <p class="text-xs text-slate-500">Mendukung: <span class="text-blue-400 font-bold">.JPG, .PMG, .PDF, .DOCX, .TXT</span></p>
                     <input type="file" id="fileIn" class="hidden" accept="image/*,.txt,.pdf,.docx" onchange="handleFile()">
                 </div>
                 
@@ -150,7 +150,7 @@
             <div class="max-w-xl w-full space-y-6 text-center">
                 <div class="bg-gradient-to-br from-purple-900/40 to-blue-900/40 border border-white/10 rounded-2xl p-8">
                     <svg class="w-16 h-16 mx-auto text-blue-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                    <h2 class="text-xl font-bold mb-2">Penerjemah Website</h2>
+                    <h2 class="text-xl font-bold mb-2">Penerjemahan Situs</h2>
                     <input type="text" id="webUrl" placeholder="Contoh: https://wikipedia.org" class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500 mb-4">
                     <div class="flex items-center gap-2 mb-6 justify-center">
                         <span class="text-xs text-slate-500">Terjemahkan ke:</span>
@@ -160,7 +160,7 @@
                             <input type="hidden" id="valWebTgt">
                         </div>
                     </div>
-                    <button onclick="runWebTranslate()" class="w-full py-3 bg-blue-600 rounded-xl font-bold shadow-lg hover:bg-blue-500 transition">BUKA WEBSITE 🔗</button>
+                    <button onclick="runWebTranslate()" class="w-full py-3 bg-blue-600 rounded-xl font-bold shadow-lg hover:bg-blue-500 transition">BUKA WEBSITE</button>
                 </div>
             </div>
         </section>
@@ -186,7 +186,7 @@
         <div class="bg-[#151515] w-full max-w-sm rounded-2xl border border-white/20 p-6 shadow-2xl">
             <h3 class="text-lg font-bold mb-4 text-white">Pengaturan Suara</h3>
             
-            <label class="text-xs text-slate-400 block mb-2">Jenis Suara (Browser)</label>
+            <label class="text-xs text-slate-400 block mb-2">Jenis-Jenis Suara (kustomisasi)</label>
             <select id="setVoice" class="w-full bg-black border border-white/10 rounded px-2 py-2 text-sm text-white mb-4 outline-none"></select>
 
             <label class="text-xs text-slate-400 block mb-1">Kecepatan: <span id="valRate">1.0</span>x</label>
