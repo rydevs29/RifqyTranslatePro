@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RifqyTranslatePro</title>
+    <title>RifqyTranslatePro V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -73,18 +77,44 @@
 
         <section id="tab-img" class="hidden w-full h-full flex flex-col p-6 items-center overflow-y-auto">
             <div class="max-w-xl w-full space-y-6">
-                <div class="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center hover:border-blue-500/50 transition cursor-pointer" onclick="document.getElementById('fileIn').click()">
-                    <svg class="w-12 h-12 mx-auto text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    <p class="text-slate-400">Klik untuk upload <br><span class="text-xs text-slate-500">Gambar (.png, .jpg) atau Teks (.txt)</span></p>
-                    <input type="file" id="fileIn" class="hidden" accept="image/*,.txt" onchange="handleFile()">
+                <div class="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center hover:border-blue-500/50 transition cursor-pointer group" onclick="document.getElementById('fileIn').click()">
+                    <div class="p-4 bg-white/5 inline-block rounded-full mb-4 group-hover:scale-110 transition">
+                        <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <p class="text-lg font-bold text-white mb-1">Upload File Dokumen</p>
+                    <p class="text-xs text-slate-500">Mendukung: <span class="text-blue-400 font-bold">.JPG, .PNG, .PDF, .DOCX, .TXT</span></p>
+                    <input type="file" id="fileIn" class="hidden" accept="image/*,.txt,.pdf,.docx" onchange="handleFile()">
                 </div>
                 
                 <div id="ocrRes" class="hidden bg-slate-900 border border-white/10 rounded-2xl p-4 w-full">
-                    <h3 class="text-xs font-bold text-blue-400 mb-2">HASIL SCAN:</h3>
-                    <p id="extractedText" class="text-sm text-white mb-4 italic p-2 bg-black/20 rounded">...</p>
+                    <h3 class="text-xs font-bold text-blue-400 mb-2">HASIL EKSTRAKSI:</h3>
+                    <p id="extractedText" class="text-sm text-white mb-4 italic p-2 bg-black/20 rounded max-h-40 overflow-y-auto">...</p>
                     <button onclick="transferToText()" class="w-full py-2 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition">TERJEMAHKAN HASIL INI</button>
                 </div>
-                <div id="ocrLoad" class="hidden text-center"><span class="animate-spin inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"></span><p class="text-xs mt-2 text-slate-500">Memproses Gambar...</p></div>
+                <div id="ocrLoad" class="hidden text-center"><span class="animate-spin inline-block w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"></span><p class="text-xs mt-2 text-slate-500">Memproses...</p></div>
+            </div>
+        </section>
+
+        <section id="tab-web" class="hidden w-full h-full flex flex-col p-6 items-center overflow-y-auto">
+            <div class="max-w-xl w-full space-y-6 text-center">
+                <div class="bg-gradient-to-br from-purple-900/40 to-blue-900/40 border border-white/10 rounded-2xl p-8">
+                    <svg class="w-16 h-16 mx-auto text-blue-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                    <h2 class="text-xl font-bold mb-2">Penerjemah Website</h2>
+                    <p class="text-sm text-slate-400 mb-6">Masukkan link website (URL) untuk menerjemahkan seluruh halaman.</p>
+                    
+                    <input type="text" id="webUrl" placeholder="Contoh: https://wikipedia.org" class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white outline-none focus:border-blue-500 mb-4">
+                    
+                    <div class="flex items-center gap-2 mb-6 justify-center">
+                        <span class="text-xs text-slate-500">Terjemahkan ke:</span>
+                        <div class="relative w-40">
+                             <button id="btnWebTgt" onclick="toggleDD('ddWebTgt')" class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-left flex justify-between items-center hover:bg-white/10 transition"><span id="lblWebTgt">Indonesian</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+                            <div id="ddWebTgt" class="hidden absolute top-full left-0 mt-1 w-64 bg-[#151515] border border-white/20 rounded-xl shadow-2xl z-50 overflow-hidden text-left"><div class="p-2 border-b border-white/10"><input type="text" id="srcWebTgt" class="w-full bg-black border border-white/10 rounded px-2 py-1 text-xs text-white" placeholder="Cari..." onkeyup="filterLang('srcWebTgt','lstWebTgt')"></div><ul id="lstWebTgt" class="custom-dropdown max-h-60 overflow-y-auto p-1"></ul></div>
+                            <input type="hidden" id="valWebTgt">
+                        </div>
+                    </div>
+
+                    <button onclick="runWebTranslate()" class="w-full py-3 bg-blue-600 rounded-xl font-bold shadow-lg hover:bg-blue-500 transition">BUKA WEBSITE TERJEMAHAN 🔗</button>
+                </div>
             </div>
         </section>
 
@@ -98,10 +128,11 @@
     </main>
 
     <nav class="shrink-0 h-[65px] bg-black border-t border-white/10 flex justify-around items-center z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
-        <button onclick="goTab('text')" id="nav-text" class="flex flex-col items-center gap-1 text-blue-500"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg><span class="text-[9px] font-bold">TEKS</span></button>
-        <button onclick="goTab('voice')" id="nav-voice" class="flex flex-col items-center gap-1 text-slate-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg><span class="text-[9px] font-bold">SUARA</span></button>
-        <button onclick="goTab('img')" id="nav-img" class="flex flex-col items-center gap-1 text-slate-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span class="text-[9px] font-bold">SCAN</span></button>
-        <button onclick="goTab('hist')" id="nav-hist" class="flex flex-col items-center gap-1 text-slate-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-[9px] font-bold">RIWAYAT</span></button>
+        <button onclick="goTab('text')" id="nav-text" class="flex flex-col items-center gap-1 text-blue-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg><span class="text-[9px] font-bold">TEKS</span></button>
+        <button onclick="goTab('voice')" id="nav-voice" class="flex flex-col items-center gap-1 text-slate-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg><span class="text-[9px] font-bold">SUARA</span></button>
+        <button onclick="goTab('img')" id="nav-img" class="flex flex-col items-center gap-1 text-slate-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span class="text-[9px] font-bold">FILE</span></button>
+        <button onclick="goTab('web')" id="nav-web" class="flex flex-col items-center gap-1 text-slate-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg><span class="text-[9px] font-bold">WEB</span></button>
+        <button onclick="goTab('hist')" id="nav-hist" class="flex flex-col items-center gap-1 text-slate-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-[9px] font-bold">RIWAYAT</span></button>
     </nav>
 
     <div id="modalSet" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
