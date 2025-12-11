@@ -1,3 +1,4 @@
+// --- INIT VARS ---
 let activeTab = 'text';
 let voices = [];
 let historyDB = JSON.parse(localStorage.getItem('rt_history')) || [];
@@ -19,7 +20,7 @@ function init() {
     renderHist();
 }
 
-// --- TOGGLE COMPARE UI ---
+// --- TOGGLE UI ---
 function toggleCompareMode() {
     const isComp = document.getElementById('chkCompare').checked;
     const stdArea = document.getElementById('stdOutputArea');
@@ -43,30 +44,31 @@ async function runTranslate() {
     const isComp = document.getElementById('chkCompare').checked;
 
     if(isComp) {
-        // === MODE BANDINGKAN ===
+        // === MODE BANDINGKAN (3 MESIN BEDA) ===
+        // Kita pakai 3 Provider paling stabil: Google 1, Google 2 (Beda Server), MyMemory
         document.getElementById('loadComp1').classList.remove('hidden');
         document.getElementById('loadComp2').classList.remove('hidden');
         document.getElementById('loadComp3').classList.remove('hidden');
         
-        // Panggil 3 Server Paralel
         Promise.all([
-            fetchSingle(txt, 'auto', tgt, 'google'),
-            fetchSingle(txt, 'auto', tgt, 'lingva'),
-            fetchSingle(txt, 'auto', tgt, 'libre')
+            fetchSingle(txt, 'auto', tgt, 'google_gtx'), // Google Utama
+            fetchSingle(txt, 'auto', tgt, 'mymemory'),   // MyMemory (Beda Engine)
+            fetchSingle(txt, 'auto', tgt, 'google_dict') // Google Backup (Sering beda dikit)
         ]).then(results => {
-            document.getElementById('outComp1').value = results[0] || "Gagal";
-            document.getElementById('outComp2').value = results[1] || "Gagal";
-            document.getElementById('outComp3').value = results[2] || "Gagal";
+            document.getElementById('outComp1').value = results[0] || "Server Sibuk";
+            document.getElementById('outComp2').value = results[1] || "Limit Harian Habis";
+            document.getElementById('outComp3').value = results[2] || "Server Sibuk";
             
             document.getElementById('loadComp1').classList.add('hidden');
             document.getElementById('loadComp2').classList.add('hidden');
             document.getElementById('loadComp3').classList.add('hidden');
             
+            // Simpan hasil terbaik (Google 1) ke history
             saveHist(txt, results[0] || results[1] || "...", 'auto', tgt);
         });
 
     } else {
-        // === MODE STANDARD (FAILOVER) ===
+        // === MODE STANDARD (AUTO FAILOVER / GOD MODE) ===
         let loader = document.getElementById('loaderTxt');
         let output = document.getElementById('txtOutput');
         let badge = document.getElementById('badgeTxt');
@@ -76,75 +78,148 @@ async function runTranslate() {
         output.placeholder = "";
         badge.classList.add('hidden');
         
+        // Panggil Fungsi Inti
         let result = await coreTrans(txt, 'auto', tgt);
         
         loader.classList.add('hidden');
         if(result) {
             output.value = result.text;
-            badge.innerText = result.provider;
+            badge.innerText = result.provider; // Tampilkan nama server yg berhasil
             badge.classList.remove('hidden');
             saveHist(txt, result.text, 'auto', tgt);
         } else {
-            output.value = "Maaf, semua server sibuk.";
+            output.value = "Semua 10 server sibuk. Cek koneksi internet.";
         }
     }
 }
 
-// --- CORE TRANSLATION (FAILOVER MODE) ---
+// --- CORE TRANSLATION (10+ SERVER LIST) ---
 async function coreTrans(text, s, t) {
-    // Coba berurutan sampai berhasil
-    let res = await fetchSingle(text, s, t, 'google');
-    if(res) return { text: res, provider: "Google" };
-    
-    res = await fetchSingle(text, s, t, 'lingva');
-    if(res) return { text: res, provider: "Lingva" };
-    
-    res = await fetchSingle(text, s, t, 'libre');
-    if(res) return { text: res, provider: "Libre" };
-    
+    // Daftar Server (Prioritas Atas ke Bawah)
+    const apis = [
+        // 1. GOOGLE GTX (Paling Cepat & Stabil)
+        { name: "Google Main", type: "google_gtx" },
+        
+        // 2. GOOGLE DICT (Jalur Chrome Extension)
+        { name: "Google Alt", type: "google_dict" },
+        
+        // 3. GOOGLE CLIENTS5 (Jalur Android)
+        { name: "Google Mobile", type: "google_c5" },
+        
+        // 4. MYMEMORY (Engine Berbeda, Kualitas Tinggi)
+        { name: "MyMemory", type: "mymemory" },
+        
+        // 5. LINGVA (Primary)
+        { name: "Lingva ML", type: "lingva_ml" },
+        
+        // 6. LINGVA (Backup Sweden)
+        { name: "Lingva SE", type: "lingva_se" },
+        
+        // 7. GOOGLE WEBAPP (Jalur Webapp)
+        { name: "Google Web", type: "google_webapp" },
+        
+        // 8. LIBRE (Argos - Sering Down tapi dicoba aja)
+        { name: "Libre Argos", type: "libre_argos" }
+    ];
+
+    // Loop semua server sampai ada yang nyantol
+    for (let api of apis) {
+        try {
+            let res = await fetchSingle(text, s, t, api.type);
+            if (res && res.length > 0) return { text: res, provider: api.name };
+        } catch (e) {
+            // Lanjut ke server berikutnya...
+        }
+    }
     return null;
 }
 
-// --- SINGLE FETCH HELPER ---
-async function fetchSingle(text, s, t, provider) {
+// --- SINGLE FETCH HELPER (LOGIKA MURNI) ---
+async function fetchSingle(text, s, t, type) {
+    const timeout = 4000; // Maksimal nunggu 4 detik per server
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
     try {
-        if(provider === 'google') {
-            let u = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${s}&tl=${t}&dt=t&q=${encodeURIComponent(text)}`;
-            let r = await fetch(u);
-            if(!r.ok) return null;
+        let url = "";
+        let res = null;
+
+        if (type === 'google_gtx') {
+            url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${s}&tl=${t}&dt=t&q=${encodeURIComponent(text)}`;
+            let r = await fetch(url, { signal: controller.signal });
+            if(!r.ok) throw 'err';
             let j = await r.json();
-            return j[0].map(x=>x[0]).join('');
+            res = j[0].map(x => x[0]).join('');
         }
-        else if(provider === 'lingva') {
-            let u = `https://lingva.ml/api/v1/${s}/${t}/${encodeURIComponent(text)}`;
-            let r = await fetch(u);
-            if(!r.ok) return null;
+        else if (type === 'google_dict') {
+            url = `https://translate.googleapis.com/translate_a/single?client=dict-chrome-ex&sl=${s}&tl=${t}&dt=t&q=${encodeURIComponent(text)}`;
+            let r = await fetch(url, { signal: controller.signal });
+            if(!r.ok) throw 'err';
             let j = await r.json();
-            return j.translation;
+            res = j[0].map(x => x[0]).join('');
         }
-        else if(provider === 'libre') {
+        else if (type === 'google_c5') {
+            url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${s}&tl=${t}&q=${encodeURIComponent(text)}`;
+            let r = await fetch(url, { signal: controller.signal });
+            if(!r.ok) throw 'err';
+            let j = await r.json();
+            res = j[0]; // Format balikan clients5 beda (array string langsung)
+        }
+        else if (type === 'google_webapp') {
+            url = `https://translate.googleapis.com/translate_a/single?client=webapp&sl=${s}&tl=${t}&dt=t&q=${encodeURIComponent(text)}`;
+            let r = await fetch(url, { signal: controller.signal });
+            if(!r.ok) throw 'err';
+            let j = await r.json();
+            res = j[0].map(x => x[0]).join('');
+        }
+        else if (type === 'mymemory') {
+            // Email 'rifqy' cuma dummy biar limit nambah dikit, aslinya perlu email valid
+            url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${s}|${t}&de=rifqy@gmail.com`;
+            let r = await fetch(url, { signal: controller.signal });
+            let j = await r.json();
+            if(j.responseStatus !== 200) throw 'limit';
+            res = j.responseData.translatedText;
+        }
+        else if (type === 'lingva_ml') {
+            url = `https://lingva.ml/api/v1/${s}/${t}/${encodeURIComponent(text)}`;
+            let r = await fetch(url, { signal: controller.signal });
+            let j = await r.json();
+            res = j.translation;
+        }
+        else if (type === 'lingva_se') {
+            url = `https://lingva.se/api/v1/${s}/${t}/${encodeURIComponent(text)}`;
+            let r = await fetch(url, { signal: controller.signal });
+            let j = await r.json();
+            res = j.translation;
+        }
+        else if (type === 'libre_argos') {
             let r = await fetch("https://translate.argosopentech.com/translate", {
-                method:'POST',
-                body:JSON.stringify({q:text, source:s, target:t, format:'text'}),
-                headers:{'Content-Type':'application/json'}
+                method: 'POST',
+                body: JSON.stringify({ q: text, source: s, target: t, format: 'text' }),
+                headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal
             });
-            if(!r.ok) return null;
             let j = await r.json();
-            return j.translatedText;
+            res = j.translatedText;
         }
-    } catch(e) { return null; }
-    return null;
+
+        clearTimeout(id);
+        return res;
+
+    } catch (e) {
+        clearTimeout(id);
+        return null;
+    }
 }
 
-// --- VOICE & OTHER LOGIC (UNCHANGED) ---
+// --- VOICE & UI (TIDAK BERUBAH) ---
 let rec, isRec=false, side=null;
 if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     rec = new SpeechRecognition(); rec.continuous=false; rec.interimResults=true;
     rec.onstart = () => { isRec=true; document.getElementById('vStatus').style.opacity=1; };
     rec.onend = () => { 
-        isRec=false; document.getElementById('vStatus').style.opacity=0;
-        resetMicUI();
+        isRec=false; document.getElementById('vStatus').style.opacity=0; resetMicUI();
         let elTxt = (side==='A') ? 'voiceTextA' : 'voiceTextB';
         let txt = document.getElementById(elTxt).innerText;
         if(txt !== '...' && txt.trim() !== "") doVoiceTrans(txt);
